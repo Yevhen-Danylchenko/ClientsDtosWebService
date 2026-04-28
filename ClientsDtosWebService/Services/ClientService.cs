@@ -51,10 +51,23 @@ namespace ClientsDtosWebService.Services
             return client;
         }
 
-        public List<Client> SearchClient(SearchClientDto obj)
+        public List<Client> SearchClients(SearchClientDto obj)
         {
-            return _context.Clients.Where(c => c.Name.Contains(obj.Name) && c.Email.Contains(obj.Email)).ToList();
+            var query = _context.Clients.AsQueryable();
+
+            if (!string.IsNullOrEmpty(obj.Name))
+            {
+                query = query.Where(c => c.Name.Contains(obj.Name));
+            }
+
+            if (!string.IsNullOrEmpty(obj.Email))
+            {
+                query = query.Where(c => c.Email.Contains(obj.Email));
+            }
+
+            return query.ToList();
         }
+
         public bool DeleteClient(int id)
         {
             var client = _context.Clients.FirstOrDefault(c => c.Id == id);

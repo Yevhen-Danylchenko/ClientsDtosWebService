@@ -26,21 +26,18 @@ namespace ClientsDtosWebService.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(AddClientDto model)
+        public IActionResult Index(ClientsIndexViewModel vm)
         {
             if (ModelState.IsValid)
             {
-                _clientService.AddClient(model);
+                _clientService.AddClient(vm.NewClient);
                 return RedirectToAction("Index");
             }
 
-            var vm = new ClientsIndexViewModel
-            {
-                Clients = _clientService.GetAllClients(),
-                NewClient = model
-            };
+            vm.Clients = _clientService.GetAllClients();
             return View(vm);
         }
+
 
         [HttpGet]
         public IActionResult Create()
@@ -65,7 +62,7 @@ namespace ClientsDtosWebService.Controllers
             return View(model);
         }
 
-        [HttpPut("{id}")]
+        [HttpGet("{id}")]
         public IActionResult Edit(int id)
         {
             var client = _clientService.GetClientById(id);
@@ -73,20 +70,52 @@ namespace ClientsDtosWebService.Controllers
             {
                 return NotFound();
             }
+
             var editClientDto = new EditClientDto
-            {                
+            {
                 Name = client.Name,
                 Email = client.Email,
                 Password = client.Password,
+                Age = client.Age
             };
+
             return View(editClientDto);
         }
 
-        [HttpGet("search")]
-        public IActionResult Search([FromQuery] SearchClientDto obj) 
-        { 
-            return View(_clientService.SearchClient(obj));
+        [HttpPost("{id}")]
+        public IActionResult Edit(int id, EditClientDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var client = _clientService.GetClientById(id);
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            // Оновлюємо дані клієнта
+            client.Name = model.Name;
+            client.Email = model.Email;
+            client.Password = model.Password;
+            client.Age = model.Age;
+
+            // Викликаємо сервіс для збереження змін
+            _clientService.UpdateClient(id, model);
+
+            return RedirectToAction("Index");
         }
+
+        [HttpGet("search")]
+        public IActionResult Search([FromQuery] SearchClientDto obj)
+        {
+            var results = _clientService.SearchClients(obj);
+            return View(results);
+        }
+
+
 
         [HttpPost]
         public IActionResult Delete(int id)
