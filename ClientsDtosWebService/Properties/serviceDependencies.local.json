@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "storage1": {
+      "ignored": "true",
+      "type": "storage",
+      "connectionId": "AzureStorage:ConnectionString"
+    },
+    "sqlite1": {
+      "ignored": "true",
+      "type": "sqlite"
+    }
+  }
+}

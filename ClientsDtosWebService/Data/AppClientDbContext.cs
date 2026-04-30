@@ -9,5 +9,16 @@ namespace ClientsDtosWebService.Data
         {
         }
         public DbSet<Client> Clients => Set<Client>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Ігноруємо всі властивості, які потрібні лише для Azure Table Storage
+            modelBuilder.Entity<Client>().Ignore(c => c.PartitionKey);
+            modelBuilder.Entity<Client>().Ignore(c => c.RowKey);
+            modelBuilder.Entity<Client>().Ignore(c => c.Timestamp);
+            modelBuilder.Entity<Client>().Ignore(c => c.ETag);
+        }
     }
 }

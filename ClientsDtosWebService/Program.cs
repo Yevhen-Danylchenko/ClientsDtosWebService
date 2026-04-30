@@ -2,6 +2,7 @@ using ClientsDtosWebService.Data;
 using ClientsDtosWebService.Services;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace ClientsDtosWebService
 {
     public class Program
@@ -12,6 +13,7 @@ namespace ClientsDtosWebService
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSingleton<AzureTableService>();
             builder.Services.AddDbContext<AppClientDbContext>(options =>
                 options.UseSqlite("Data Source=client.db"));
             builder.Services.AddScoped<ClientService>();
